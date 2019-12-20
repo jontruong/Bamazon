@@ -1,5 +1,6 @@
 var mysql = require('mysql');
 var inquirer = require('inquirer');
+var colors = require('colors');
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -15,13 +16,13 @@ connection.connect(function(error){
 })
 
 function viewItems(){
-    console.log(`Welcome to Bamazon! Here are the items for sale:\n`);
+    console.log(`WELCOME TO BAMAZON! HERE ARE THE ITEMS FOR SALE:\n`.green);
     connection.query("Select * FROM products", function(err,result){
         if (err) throw err;
        result.forEach(product => {
-        console.log(`ID: ${product.id} PRODUCT: ${product.product_name} 
+        console.log(`ID: ${product.id} PRODUCT: ${product.product_name}. 
 DEPARTMENT: ${product.department_name} PRICE: ${product.price} STOCK: ${product.stock_quantity} 
-`);
+`.bold.brightWhite);
        });
        buyItems();
     });  
@@ -30,12 +31,12 @@ DEPARTMENT: ${product.department_name} PRICE: ${product.price} STOCK: ${product.
 function buyItems(){
         inquirer.prompt([{
             name:"id",
-            message:"What is the id of the item you are trying to buy?",
+            message:"What is the id of the item you are trying to buy?".blue,
             type:"input",
         },
         {
            name:"quantity",
-           message:"How many do you want to buy?",
+           message:"How many do you want to buy?".blue,
            type:"input",
         }
     ]).then(function(answer){
@@ -46,7 +47,7 @@ function buyItems(){
             if(res[0].stock_quantity >=  answer.quantity){
                 decreaseStock(answer.quantity, answer.id);
                 const total = answer.quantity * res[0].price;
-                console.log(`Total cost = $${total}`);
+                console.log(`Total cost = $${total}`.bold.red);
             }
             else{
                 console.log(`
